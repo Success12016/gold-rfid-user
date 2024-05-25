@@ -8,6 +8,7 @@ const { ObjectId } = require('mongoose').Types;
 const rfidModule = require('../rfid_module/rfidReader');
 
 
+
 // เชื่อมต่อกับ MongoDB
 mongoose.connect('mongodb+srv://admin:1234@goldcluster.nf1xhez.mongodb.net/GoldRfid', {
   useNewUrlParser: true,

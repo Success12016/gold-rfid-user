@@ -1,0 +1,63 @@
+<%-  include('header') %>
+
+  <div class="container-fluid mt-3">
+    <div><h3 style="font-weight: bold;">ระบบตรวจนับทองคำรูปพรรณ</h3></div>
+      <div>
+        <a type="button" class="btn btn-success mt-2" style="margin-left: 4px;" href="/count_goldtags">
+          <span class="material-icon material-symbols-outlined">inventory</span> 
+          ระบบตรวจนับ
+        </a>
+        <a type="button" class="btn btn-primary mt-2" style="margin-left: 4px;" href="/gold_list">
+          <span class="material-icon material-symbols-outlined">inventory_2</span> รายการทองคำ
+        </a>
+        <a type="button" class="btn btn-info mt-2" style="margin-left: 4px;" href="/gold_history">
+          <span class="material-icon material-symbols-outlined">schedule</span> ประวัติ
+        </a>
+    </div>
+    <%
+      let totalGold = golds.length;
+    %>
+    <div class="mt-3">
+      <h3>จำนวนทองคำในระบบ : <%= totalGold %> รายการ</h3>
+      <ul>
+        <% const trays = { 'ถาดที่ 1': 'สร้อยคอ', 'ถาดที่ 2': 'แหวน', 'ถาดที่ 3': 'กำไลข้อมือ', 'ถาดที่ 4': 'สร้อยข้อมือ', 'ถาดที่ 5': 'ต่างหู' }; %>
+        <% Object.keys(trays).forEach(tray => {
+            const count = golds.filter(tag => tag.gold_tray === tray).length;
+            if (count > 0) { %>
+                <li><%= tray %> มี <%= trays[tray] %> <%= count %> ชิ้น</li>
+            <% }
+        }); %>
+      </ul>
+    </div>
+    <div>
+      <table class="table table-bordered">
+        <thead class="table-success">
+          <tr>
+            <th width="100px">ลำดับที่</th>
+            <th width="150px">ถาด</th>
+            <th>ชนิด</th>
+            <th>ขนาด</th>
+            <th>น้ำหนัก</th>
+            <th>Gold_Tag_id</th>
+            <th>วันที่บันทึกเข้าระบบ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% golds.forEach((gold , index) => { %>
+            <tr>
+              <td><%= index+1 %></td>
+              <td><%= gold.gold_tray %></td>
+              <td><%= gold.gold_type %></td>
+              <td><%= gold.gold_size %></td>
+              <td><%= gold.gold_weight %> กรัม</td>
+              <td><%= gold.gold_id %></td>
+              <td><%= dayjs(gold.gold_timestamp).locale('th').format('DD-MM-YYYY HH:mm:ss') %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<%-  include('footer') %>
+

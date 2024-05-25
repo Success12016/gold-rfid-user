@@ -1,0 +1,135 @@
+<%- include('header') %>
+
+<form method="GET">
+    <div class="container-fluid mt-3">
+        <div><h3 style="font-weight: bold;">ประวัติทองคำในแต่ละวัน</h3></div>
+        <div class="row">
+            <div class="row mt-1">
+                <div class="col-2">
+                    <label for="start_date_input" style="font-weight: 600;">เลือกวันที่เริ่มต้น</label>
+                    <input type="date" class="form-control" id="start_date_input" name="start_date" value="<%= startDate %>" placeholder="เลือกวันที่เริ่มต้น">
+                </div>
+                <div class="col-2">
+                    <label for="end_date_input" style="font-weight: 600;">ถึงวันที่</label>
+                    <input type="date" class="form-control" id="end_date_input" name="end_date" value="<%= endDate %>" placeholder="ถึงวันที่">
+                </div>
+            </div> 
+            <div class="col-2 mt-2">
+                <label style="font-weight: 600;">ประเภทของทองคำ</label>
+                <select class="form-select" name="select_goldType">
+                    <option value="">เลือกประเภททองคำ</option>
+                    <option value="สร้อยคอ" <%= select_goldType === 'สร้อยคอ' ? 'selected' : '' %>>สร้อยคอ</option>
+                    <option value="แหวน" <%= select_goldType === 'แหวน' ? 'selected' : '' %>>แหวน</option>
+                    <option value="กำไลข้อมือ" <%= select_goldType === 'กำไลข้อมือ' ? 'selected' : '' %>>กำไลข้อมือ</option>
+                    <option value="สร้อยข้อมือ" <%= select_goldType === 'สร้อยข้อมือ' ? 'selected' : '' %>>สร้อยข้อมือ</option>
+                    <option value="ต่างหู" <%= select_goldType === 'ต่างหู' ? 'selected' : '' %>>ต่างหู</option>
+                </select>                
+            </div>
+            <div class="col-2 mt-2">
+                <label style="font-weight: 600;">ขนาดของทองคำ</label>
+                <select class="form-select" name="select_goldSize">
+                    <option value="">เลือกขนาดทองคำ</option>
+                    <option value="ครึ่งสลึง" <%= select_goldSize === 'ครึ่งสลึง' ? 'selected' : '' %>>ครึ่งสลึง</option>
+                    <option value="1 สลึง" <%= select_goldSize === '1 สลึง' ? 'selected' : '' %>>1 สลึง</option>
+                    <option value="2 สลึง" <%= select_goldSize === '2 สลึง' ? 'selected' : '' %>>2 สลึง</option>
+                    <option value="1 บาท" <%= select_goldSize === '1 บาท' ? 'selected' : '' %>>1 บาท</option>
+                    <option value="2 บาท" <%= select_goldSize === '2 บาท' ? 'selected' : '' %>>2 บาท</option>
+                    <option value="3 บาท" <%= select_goldSize === '3 บาท' ? 'selected' : '' %>>3 บาท</option>
+                </select>
+            </div>
+        </div>       
+        <div>
+            <button type="submit" class="btn btn-primary mt-3">
+                <span class="material-icon material-symbols-outlined">
+                    search
+                </span>
+                ค้นหา
+            </button>
+            <a type="button" class="btn btn-danger mt-3" style="margin-left: 4px;" href="./gold_history">
+                <span class="material-icon material-symbols-outlined">
+                    close
+                </span>
+                ล้างค่า
+            </a>
+        </div>
+        <div class="mt-3">
+            <% if (goldshistory.length > 0) { %>
+                <table class="table table-bordered mt-3">
+                    <thead class="table-success">
+                        <tr>
+                            <th width="250px">วันที่บันทึกเข้าระบบ</th>
+                            <th width="150px">ถาด</th>
+                            <th>ชนิด</th>
+                            <th>ขนาด</th>
+                            <th>น้ำหนัก</th>
+                            <th>Gold_Tag_id</th>
+                            <th width="250px">จำนวนทองคำในถาด (รายการ)</th>
+                            <th width="250px">จำนวนทองคำในวันนี้ (รายการ)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% goldshistory.forEach((gold_history, index) => { %>
+                            <tr>
+                                <td><%= dayjs(gold_history.gold_timestamp).locale('th').format('DD-MM-YYYY HH:mm:ss') %></td>
+                                <td><%= gold_history.gold_tray %></td>
+                                <td><%= gold_history.gold_type %></td>
+                                <td><%= gold_history.gold_size %></td>
+                                <td><%= gold_history.gold_weight %> กรัม</td>
+                                <td><%= gold_history.gold_id %></td>
+                                <td><%= gold_history.trayCount %></td>
+                                <td><%= gold_history.totalCount %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mt-3">
+                        <% if (currentPage > 1 && totalPages > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link color-previouspage" href="?page=1&select_goldType=<%= select_goldType %>&select_goldSize=<%= select_goldSize %>&start_date=<%= startDate %>&end_date=<%= endDate %>">หน้าแรก</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>&select_goldType=<%= select_goldType %>&select_goldSize=<%= select_goldSize %>&start_date=<%= startDate %>&end_date=<%= endDate %>" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                            </li>
+                        <% } %>
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= parseInt(currentPage) === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>&select_goldType=<%= select_goldType %>&select_goldSize=<%= select_goldSize %>&start_date=<%= startDate %>&end_date=<%= endDate %>"><%= i %></a>
+                            </li>
+                        <% } %>                                                                                              
+                        <% if (currentPage < totalPages && totalPages > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= parseInt(currentPage) + 1 %>&select_goldType=<%= select_goldType %>&select_goldSize=<%= select_goldSize %>&start_date=<%= startDate %>&end_date=<%= endDate %>" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link color-nextpage" href="?page=<%= totalPages %>&select_goldType=<%= select_goldType %>&select_goldSize=<%= select_goldSize %>&start_date=<%= startDate %>&end_date=<%= endDate %>">หน้าสุดท้าย</a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+            <% } else { %>
+                <p>ไม่มีข้อมูลทองคำตรงกับเงื่อนไขที่คุณเลือก</p>
+            <% } %>
+        </div>
+    </div>
+</form>
+
+<%- include('footer') %>
+
+<style>
+    .page-item.active .page-link {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+    .color-nextpage {
+        background-color: #007bff; /* สีเน้นของหน้าปัจจุบัน */
+        color: #ffffff; /* สีข้อความของหน้าปัจจุบัน */
+    }
+    .color-previouspage {
+        background-color: #f88379; /* สีเน้นของหน้าปัจจุบัน */
+        color: #ffffff; /* สีข้อความของหน้าปัจจุบัน */
+    }
+</style>
+
+
